@@ -131,7 +131,8 @@ func TestStack(t *testing.T) {
 	}
 	divByZero := func() {
 		a, b := 1, 0
-		_ = a / b
+		a = a / b
+		_ = a
 	}
 
 	out := Try(divByZero)
