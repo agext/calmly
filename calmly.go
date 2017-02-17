@@ -72,29 +72,29 @@ func Try(f interface{}) (o *Outcome) {
 
 // Catch calls the provided function passing the receiver Outcome as argument,
 // only if the Outcome is at PANIC level.
-func (this *Outcome) Catch(f func(*Outcome)) *Outcome {
-	if this.level == PANIC {
-		f(this)
+func (o *Outcome) Catch(f func(*Outcome)) *Outcome {
+	if o.level == PANIC {
+		f(o)
 	}
-	return this
+	return o
 }
 
 // KeepCalm downgrades a PANIC to ERROR level, to avoid triggering a panic upon
 // logging the outcome.
-func (this *Outcome) KeepCalm() *Outcome {
-	if this.level == PANIC {
-		this.level = ERROR
+func (o *Outcome) KeepCalm() *Outcome {
+	if o.level == PANIC {
+		o.level = ERROR
 	}
-	return this
+	return o
 }
 
 // Escalate converts a PANIC into a FATAL condition, to trigger program
 // termination upon logging the outcome.
-func (this *Outcome) Escalate() *Outcome {
-	if this.level == PANIC {
-		this.level = FATAL
+func (o *Outcome) Escalate() *Outcome {
+	if o.level == PANIC {
+		o.level = FATAL
 	}
-	return this
+	return o
 }
 
 // Log sends the error-condition Outcome to the provided log, using the appropriate
@@ -102,60 +102,60 @@ func (this *Outcome) Escalate() *Outcome {
 // Panic(), and ERROR using Print(). Non-error conditions are not logged
 // because there is no information stored in the Outcome, beside
 // what the Try-ed function returned (and is better suited to log itself).
-func (this *Outcome) Log(log Logger) *Outcome {
-	switch this.level {
+func (o *Outcome) Log(log Logger) *Outcome {
+	switch o.level {
 	case FATAL:
-		log.Fatal(this)
+		log.Fatal(o)
 	case PANIC:
-		log.Panic(this)
+		log.Panic(o)
 	case ERROR:
-		log.Print(this)
+		log.Print(o)
 	}
-	return this
+	return o
 }
 
 // Level returns the error level stored by the receiver.
-func (this *Outcome) Level() int8 {
-	return this.level
+func (o *Outcome) Level() int8 {
+	return o.level
 }
 
 // SetLevel sets the error level stored by the receiver.
-func (this *Outcome) SetLevel(l int8) *Outcome {
+func (o *Outcome) SetLevel(l int8) *Outcome {
 	if levelName(l) != "?" {
-		this.level = l
+		o.level = l
 	}
-	return this
+	return o
 }
 
 // Code returns the error code stored by the receiver.
-func (this *Outcome) Code() int {
-	return this.code
+func (o *Outcome) Code() int {
+	return o.code
 }
 
 // SetCode sets the error code stored by the receiver.
-func (this *Outcome) SetCode(c int) *Outcome {
-	this.code = c
-	return this
+func (o *Outcome) SetCode(c int) *Outcome {
+	o.code = c
+	return o
 }
 
 // Text returns the error text stored by the receiver.
-func (this *Outcome) Text() string {
-	return this.text
+func (o *Outcome) Text() string {
+	return o.text
 }
 
 // SetText sets the error text stored by the receiver.
-func (this *Outcome) SetText(t string) *Outcome {
-	this.text = t
-	return this
+func (o *Outcome) SetText(t string) *Outcome {
+	o.text = t
+	return o
 }
 
 // Info returns the error info stored by the receiver.
-func (this *Outcome) Info() []string {
-	return this.info
+func (o *Outcome) Info() []string {
+	return o.info
 }
 
 // addInfo adds (more) error info to the receiver.
-func (this *Outcome) addInfo(calldepth int, s ...string) *Outcome {
+func (o *Outcome) addInfo(calldepth int, s ...string) *Outcome {
 	for i, line := range s {
 		if line == "debug.stack" {
 			calldepth *= 2
@@ -181,28 +181,28 @@ func (this *Outcome) addInfo(calldepth int, s ...string) *Outcome {
 			break
 		}
 	}
-	this.info = append(this.info, s...)
-	return this
+	o.info = append(o.info, s...)
+	return o
 }
 
 // AddInfo adds (more) error info to the receiver.
-func (this *Outcome) AddInfo(s ...string) *Outcome {
-	return this.addInfo(2, s...)
+func (o *Outcome) AddInfo(s ...string) *Outcome {
+	return o.addInfo(2, s...)
 }
 
 // Value provides the value returned by the Try-ed function, if any.
-func (this *Outcome) Value() interface{} {
-	return this.val
+func (o *Outcome) Value() interface{} {
+	return o.val
 }
 
 // Err provides the error returned by the Try-ed function, if any.
-func (this *Outcome) Err() error {
-	return this.err
+func (o *Outcome) Err() error {
+	return o.err
 }
 
 // Result provides the value and error returned by the Try-ed function, if any.
-func (this *Outcome) Result() (interface{}, error) {
-	return this.val, this.err
+func (o *Outcome) Result() (interface{}, error) {
+	return o.val, o.err
 }
 
 // Error returns a string representation of the Outcome if it is in an error condition,
@@ -210,12 +210,12 @@ func (this *Outcome) Result() (interface{}, error) {
 // returning a non-nil error does not constitute an error condition for the Outcome.
 // That error value can be retrieved via Err or Result.
 // This is also useful for satisfying the `error` interface.
-func (this *Outcome) Error() string {
-	if this.level == OK {
+func (o *Outcome) Error() string {
+	if o.level == OK {
 		return ""
 	}
-	if this.code != 0 {
-		return this.text + fmt.Sprintf(" (code: 0x%04x)", this.code)
+	if o.code != 0 {
+		return o.text + fmt.Sprintf(" (code: 0x%04x)", o.code)
 	}
-	return this.text
+	return o.text
 }

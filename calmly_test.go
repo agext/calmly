@@ -24,14 +24,14 @@ type mockLogger struct {
 	log string
 }
 
-func (this *mockLogger) Print(s ...interface{}) {
-	this.log += fmt.Sprintln(s...)
+func (ml *mockLogger) Print(s ...interface{}) {
+	ml.log += fmt.Sprintln(s...)
 }
-func (this *mockLogger) Fatal(s ...interface{}) {
-	this.log += "[FATAL] " + fmt.Sprintln(s...)
+func (ml *mockLogger) Fatal(s ...interface{}) {
+	ml.log += "[FATAL] " + fmt.Sprintln(s...)
 }
-func (this *mockLogger) Panic(s ...interface{}) {
-	this.log += "[PANIC] " + fmt.Sprintln(s...)
+func (ml *mockLogger) Panic(s ...interface{}) {
+	ml.log += "[PANIC] " + fmt.Sprintln(s...)
 }
 
 func TestLevelNames(t *testing.T) {
@@ -131,7 +131,7 @@ func TestStack(t *testing.T) {
 	}
 	divByZero := func() {
 		a, b := 1, 0
-		a /= b
+		_ = a / b
 	}
 
 	out := Try(divByZero)
@@ -213,7 +213,7 @@ func TestStack(t *testing.T) {
 		t.Errorf(`Try(goodFunc).Err() = %v, want %v`, oe, nil)
 	}
 	if orv, ore := out.Result(); orv != ov || ore != oe {
-		t.Errorf(`Try(goodFunc).Result() should equal (Try(goodFunc).Value(), Try(goodFunc).Err()); got (%v, %v != %v, $v)`, orv, ore, ov, oe)
+		t.Errorf(`Try(goodFunc).Result() should equal (Try(goodFunc).Value(), Try(goodFunc).Err()); got (%v, %v != %v, %v)`, orv, ore, ov, oe)
 	}
 	if oes, exp := out.Error(), ""; oes != exp {
 		t.Errorf(`Try(goodFunc).Error() = %q, want %q`, oes, exp)
@@ -246,7 +246,7 @@ func TestStack(t *testing.T) {
 		t.Errorf(`Try(badFunc).Err() = %v, want %v`, oe, nil)
 	}
 	if orv, ore := out.Result(); orv != ov || ore != oe {
-		t.Errorf(`Try(badFunc).Result() should equal (Try(badFunc).Value(), Try(badFunc).Err()); got (%v, %v != %v, $v)`, orv, ore, ov, oe)
+		t.Errorf(`Try(badFunc).Result() should equal (Try(badFunc).Value(), Try(badFunc).Err()); got (%v, %v != %v, %v)`, orv, ore, ov, oe)
 	}
 	if oes, exp := out.Error(), ot; oes != exp {
 		t.Errorf(`Try(badFunc).Error() = %q, want %q`, oes, exp)

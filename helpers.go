@@ -43,6 +43,7 @@ func levelName(l int8) string {
 	return "?"
 }
 
+// Logger defines the interface expected by the Log method of Outcome
 type Logger interface {
 	Fatal(...interface{})
 	Panic(...interface{})
